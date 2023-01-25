@@ -1,6 +1,7 @@
 import './style.css'
 
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const scene = new THREE.Scene()
 const geometry = new THREE.SphereGeometry(3, 64, 64)
@@ -17,7 +18,7 @@ const sizes = {
 }
 
 const light = new THREE.PointLight(0xffffff, 1, 100)
-light.position.set(10, 0, 10)
+light.position.set(5, 10, 10)
 scene.add(light)
 
 const camera = new THREE.PerspectiveCamera(
@@ -26,9 +27,11 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 )
-camera.position.z = 20
 
+camera.position.z = 20
 scene.add(camera)
+
+const controls = new OrbitControls(camera, canvas)
 
 const canvas = document.querySelector('.canvas')
 const renderer = new THREE.WebGLRenderer({ canvas })
@@ -42,11 +45,11 @@ window.addEventListener('resize', () => {
 
   camera.updateProjectionMatrix()
   camera.aspect = sizes.width / sizes.height
-
   renderer.setSize(sizes.width, sizes.height)
 })
 
 const loop = () => {
+  // mesh.position.x += 0.2
   window.requestAnimationFrame(loop)
   renderer.render(scene, camera)
 }
