@@ -1,13 +1,28 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import gsap from 'gsap'
+
+let color = getRandomColor()
+
+function getRandomColor() {
+  let letters = '0123456789ABCDEF'
+  let color = '#'
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)]
+  }
+  return color
+}
 
 const scene = new THREE.Scene()
 const geometry = new THREE.SphereGeometry(3, 64, 64)
 const material = new THREE.MeshStandardMaterial({
-  color: '#8803fc',
+  color: color,
 })
 
 const mesh = new THREE.Mesh(geometry, material)
+mesh.setColor = function (color) {
+  mesh.material.color.set(color)
+}
 scene.add(mesh)
 
 const sizes = {
@@ -52,6 +67,12 @@ window.addEventListener('resize', () => {
   renderer.setSize(sizes.width, sizes.height)
 })
 
+setInterval(() => {
+  const color = getRandomColor()
+  mesh.setColor(getRandomColor())
+  controls.update()
+}, 3000)
+
 const loop = () => {
   controls.update()
   window.requestAnimationFrame(loop)
@@ -59,3 +80,6 @@ const loop = () => {
 }
 
 loop()
+
+// const tl = gsap.timeline({ defaults: { duration: 1 } })
+// tl.fromTo(mesh.material.color, { duration: 1, ease: 'elastic' })
