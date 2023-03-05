@@ -2,27 +2,13 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import gsap from 'gsap'
 
-let color = getRandomColor()
-
-function getRandomColor() {
-  let letters = '0123456789ABCDEF'
-  let color = '#'
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)]
-  }
-  return color
-}
-
 const scene = new THREE.Scene()
 const geometry = new THREE.SphereGeometry(3, 64, 64)
 const material = new THREE.MeshStandardMaterial({
-  color: color,
+  color: '#F7CAC9',
 })
 
 const mesh = new THREE.Mesh(geometry, material)
-mesh.setColor = function (color) {
-  mesh.material.color.set(color)
-}
 scene.add(mesh)
 
 const sizes = {
@@ -42,6 +28,7 @@ const camera = new THREE.PerspectiveCamera(
 )
 
 camera.position.z = 20
+camera.position.y = 1 // Move the camera up slightly
 scene.add(camera)
 
 const canvas = document.querySelector('.canvas')
@@ -62,16 +49,29 @@ window.addEventListener('resize', () => {
   sizes.width = window.innerWidth
   sizes.height = window.innerHeight
 
-  camera.updateProjectionMatrix()
   camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
+
+  // Center the sphere in the viewport
+  const yOffset =
+    sizes.width > sizes.height ? 0 : (sizes.height - sizes.width) / 2
   renderer.setSize(sizes.width, sizes.height)
+  renderer.domElement.style.top = yOffset + 'px'
 })
 
-setInterval(() => {
+const tweenColor = () => {
   const color = getRandomColor()
-  mesh.setColor(getRandomColor())
-  controls.update()
-}, 3000)
+  gsap.to(mesh.material.color, {
+    r: parseInt(color.slice(1, 3), 16) / 255,
+    g: parseInt(color.slice(3, 5), 16) / 255,
+    b: parseInt(color.slice(5, 7), 16) / 255,
+    duration: 2,
+    ease: 'power4.inOut',
+    onComplete: tweenColor,
+  })
+}
+
+tweenColor()
 
 const loop = () => {
   controls.update()
@@ -81,5 +81,17 @@ const loop = () => {
 
 loop()
 
-// const tl = gsap.timeline({ defaults: { duration: 1 } })
-// tl.fromTo(mesh.material.color, { duration: 1, ease: 'elastic' })
+function getRandomColor() {
+  const colors = [
+    '#F7CAC9',
+    '#92A8D1',
+    '#FF9AA2',
+    '#AEC6CF',
+    '#FDFD96',
+    '#A8E6CE',
+    '#FFD3B5',
+    '#D0F0C0',
+  ]
+  const index = Math.floor(Math.random() * colors.length)
+  return colors[index]
+}
