@@ -82,16 +82,10 @@ const loop = () => {
 loop()
 
 function getRandomColor() {
-  const colors = [
-    '#F7CAC9',
-    '#92A8D1',
-    '#FF9AA2',
-    '#AEC6CF',
-    '#FDFD96',
-    '#A8E6CE',
-    '#FFD3B5',
-    '#D0F0C0',
-  ]
-  const index = Math.floor(Math.random() * colors.length)
-  return colors[index]
+  const letters = '0123456789ABCDEF'
+  let color = '#'
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)]
+  }
+  return color
 }
